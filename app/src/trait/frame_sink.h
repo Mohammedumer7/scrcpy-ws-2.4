@@ -1,11 +1,12 @@
-#ifndef SC_FRAME_SINK_H
-#define SC_FRAME_SINK_H
+#ifndef SC_FRAME_SINK
+#define SC_FRAME_SINK
 
 #include "common.h"
 
 #include <assert.h>
 #include <stdbool.h>
-#include <libavcodec/avcodec.h>
+
+typedef struct AVFrame AVFrame;
 
 /**
  * Frame sink trait.
@@ -17,8 +18,7 @@ struct sc_frame_sink {
 };
 
 struct sc_frame_sink_ops {
-    /* The codec context is valid until the sink is closed */
-    bool (*open)(struct sc_frame_sink *sink, const AVCodecContext *ctx);
+    bool (*open)(struct sc_frame_sink *sink);
     void (*close)(struct sc_frame_sink *sink);
     bool (*push)(struct sc_frame_sink *sink, const AVFrame *frame);
 };

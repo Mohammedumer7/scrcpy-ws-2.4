@@ -1,30 +1,23 @@
-#ifndef SC_NET_H
-#define SC_NET_H
+#ifndef NET_H
+#define NET_H
 
 #include "common.h"
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <SDL2/SDL_platform.h>
 
-#ifdef _WIN32
-
+#ifdef __WINDOWS__
 # include <winsock2.h>
-# include <stdatomic.h>
-# define SC_SOCKET_NONE NULL
-  typedef struct sc_socket_windows {
-      SOCKET socket;
-      atomic_flag closed;
-  } *sc_socket;
-
-#else // not _WIN32
-
+  #define SHUT_RD SD_RECEIVE
+  #define SHUT_WR SD_SEND
+  #define SHUT_RDWR SD_BOTH
+  typedef SOCKET socket_t;
+#else
 # include <sys/socket.h>
-# define SC_SOCKET_NONE -1
-  typedef int sc_socket;
-
+# define INVALID_SOCKET -1
+  typedef int socket_t;
 #endif
-
-#define IPV4_LOCALHOST 0x7F000001
 
 bool
 net_init(void);
@@ -32,45 +25,33 @@ net_init(void);
 void
 net_cleanup(void);
 
-sc_socket
-net_socket(void);
+socket_t
+net_connect(uint32_t addr, uint16_t port);
 
-bool
-net_connect(sc_socket socket, uint32_t addr, uint16_t port);
+socket_t
+net_listen(uint32_t addr, uint16_t port, int backlog);
 
-bool
-net_listen(sc_socket server_socket, uint32_t addr, uint16_t port, int backlog);
-
-sc_socket
-net_accept(sc_socket server_socket);
+socket_t
+net_accept(socket_t server_socket);
 
 // the _all versions wait/retry until len bytes have been written/read
 ssize_t
-net_recv(sc_socket socket, void *buf, size_t len);
+net_recv(socket_t socket, void *buf, size_t len);
 
 ssize_t
-net_recv_all(sc_socket socket, void *buf, size_t len);
+net_recv_all(socket_t socket, void *buf, size_t len);
 
 ssize_t
-net_send(sc_socket socket, const void *buf, size_t len);
+net_send(socket_t socket, const void *buf, size_t len);
 
 ssize_t
-net_send_all(sc_socket socket, const void *buf, size_t len);
+net_send_all(socket_t socket, const void *buf, size_t len);
 
-// Shutdown the socket (or close on Windows) so that any blocking send() or
-// recv() are interrupted.
+// how is SHUT_RD (read), SHUT_WR (write) or SHUT_RDWR (both)
 bool
-net_interrupt(sc_socket socket);
+net_shutdown(socket_t socket, int how);
 
-// Close the socket.
-// A socket must always be closed, even if net_interrupt() has been called.
 bool
-net_close(sc_socket socket);
-
-/**
- * Parse `ip` "xxx.xxx.xxx.xxx" to an IPv4 host representation
- */
-bool
-net_parse_ipv4(const char *ip, uint32_t *ipv4);
+net_close(socket_t socket);
 
 #endif

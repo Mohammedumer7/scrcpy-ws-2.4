@@ -5,19 +5,12 @@
 
 #include <stdbool.h>
 
-#include "options.h"
-
-enum sc_pause_on_exit {
-    SC_PAUSE_ON_EXIT_TRUE,
-    SC_PAUSE_ON_EXIT_FALSE,
-    SC_PAUSE_ON_EXIT_IF_ERROR,
-};
+#include "scrcpy.h"
 
 struct scrcpy_cli_args {
     struct scrcpy_options opts;
     bool help;
     bool version;
-    enum sc_pause_on_exit pause_on_exit;
 };
 
 void

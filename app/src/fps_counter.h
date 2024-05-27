@@ -1,5 +1,5 @@
-#ifndef SC_FPSCOUNTER_H
-#define SC_FPSCOUNTER_H
+#ifndef FPSCOUNTER_H
+#define FPSCOUNTER_H
 
 #include "common.h"
 
@@ -9,7 +9,7 @@
 
 #include "util/thread.h"
 
-struct sc_fps_counter {
+struct fps_counter {
     sc_thread thread;
     sc_mutex mutex;
     sc_cond state_cond;
@@ -28,32 +28,32 @@ struct sc_fps_counter {
 };
 
 bool
-sc_fps_counter_init(struct sc_fps_counter *counter);
+fps_counter_init(struct fps_counter *counter);
 
 void
-sc_fps_counter_destroy(struct sc_fps_counter *counter);
+fps_counter_destroy(struct fps_counter *counter);
 
 bool
-sc_fps_counter_start(struct sc_fps_counter *counter);
+fps_counter_start(struct fps_counter *counter);
 
 void
-sc_fps_counter_stop(struct sc_fps_counter *counter);
+fps_counter_stop(struct fps_counter *counter);
 
 bool
-sc_fps_counter_is_started(struct sc_fps_counter *counter);
+fps_counter_is_started(struct fps_counter *counter);
 
 // request to stop the thread (on quit)
-// must be called before sc_fps_counter_join()
+// must be called before fps_counter_join()
 void
-sc_fps_counter_interrupt(struct sc_fps_counter *counter);
+fps_counter_interrupt(struct fps_counter *counter);
 
 void
-sc_fps_counter_join(struct sc_fps_counter *counter);
+fps_counter_join(struct fps_counter *counter);
 
 void
-sc_fps_counter_add_rendered_frame(struct sc_fps_counter *counter);
+fps_counter_add_rendered_frame(struct fps_counter *counter);
 
 void
-sc_fps_counter_add_skipped_frame(struct sc_fps_counter *counter);
+fps_counter_add_skipped_frame(struct fps_counter *counter);
 
 #endif
